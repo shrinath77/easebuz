@@ -497,7 +497,7 @@ body {
                 </div>
                 <!-- END BNPL SECTION -->
 
-                <button class="pay-btn" id="payBtn" onclick="payNow()">Pay ₹<%= amount %></button>
+                <button class="pay-btn" id="payBtn" onclick="payNow()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16" style="vertical-align:middle;margin-right:6px;margin-bottom:2px;"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>Pay ₹<%= amount %></button>
                 <div id="msg"></div>
             </div>
 
@@ -693,7 +693,7 @@ function payNow() {
 
     if (!validate()) return;
 
-    $("#payBtn").prop("disabled", true).text("Processing...");
+    $("#payBtn").prop("disabled", true).html("Processing...");
     $("#msg").html("<span style='color:#555;'>⏳ Please wait...</span>");
 
     let headers = { "Content-Type": "application/json" };
@@ -708,7 +708,7 @@ function payNow() {
 
         success: function(response) {
             console.log("[PAYMENT] Success Response:", response);
-            $("#payBtn").prop("disabled", false).text("Pay ₹" + AMOUNT);
+            $("#payBtn").prop("disabled", false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16" style="vertical-align:middle;margin-right:6px;margin-bottom:2px;"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>Pay ₹' + AMOUNT);
             $("#msg").html("<span style='color:green;'>✅ " + (response.message || "Payment Successful!") + "</span>");
         },
 

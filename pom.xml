@@ -80,7 +80,7 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<port>8083</port>
+					<port>8080</port>
 					<path>/easebuzz</path>
 					<uriEncoding>UTF-8</uriEncoding>
 					<!-- Skip scanning multi-release JARs that confuse Tomcat 7's BCEL scanner -->
@@ -92,48 +92,6 @@
 				</configuration>
 			</plugin>
 
-			<!--
-			  External Tomcat Deployment via Cargo Plugin
-			  ============================================
-			  PRE-REQUISITES:
-			    1. Tomcat 9/10 installed and running on port 8080
-			    2. Tomcat Manager app enabled in conf/tomcat-users.xml:
-			         <role rolename="manager-script"/>
-			         <user username="admin" password="admin123" roles="manager-script"/>
-			    3. Run: mvn package cargo:redeploy
-			         (or cargo:deploy for first time, cargo:undeploy to remove)
-			-->
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven3-plugin</artifactId>
-				<version>1.10.11</version>
-				<configuration>
-					<container>
-						<containerId>tomcat9x</containerId>
-						<type>remote</type>
-					</container>
-					<configuration>
-						<type>runtime</type>
-						<properties>
-							<cargo.hostname>localhost</cargo.hostname>
-							<cargo.servlet.port>8080</cargo.servlet.port>
-							<cargo.tomcat.manager.url>http://localhost:8080/manager/text</cargo.tomcat.manager.url>
-							<cargo.remote.username>admin</cargo.remote.username>
-							<cargo.remote.password>admin123</cargo.remote.password>
-						</properties>
-					</configuration>
-					<deployables>
-						<deployable>
-							<groupId>com.easybuzz</groupId>
-							<artifactId>easebuzz</artifactId>
-							<type>war</type>
-							<properties>
-								<context>/easebuzz</context>
-							</properties>
-						</deployable>
-					</deployables>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
