@@ -39,7 +39,7 @@ public class FormController extends HttpServlet {
             if (conn != null) {
                 System.out.println(" Database Connected Successfully");
 
-                String sql = "INSERT INTO payment (merchant_name, merchant_id, merchant_txn_id, customer_email, customer_mobile) VALUES (?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO transactions (merchant_name, merchant_id, merchant_txn_id, customer_email, customer_mobile) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
 
                 ps.setString(1, merchantName);

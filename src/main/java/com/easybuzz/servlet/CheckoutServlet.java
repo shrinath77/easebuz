@@ -117,7 +117,7 @@ public class CheckoutServlet extends HttpServlet {
         try {
             Connection conn = DBConnection.getConnection();
             if (conn != null) {
-                String sql = "UPDATE payment SET payment_status = ? WHERE merchant_txn_id = ?";
+                String sql = "UPDATE transactions SET payment_status = ? WHERE merchant_txn_id = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, status);
                 ps.setString(2, merchantTxnId);

@@ -46,7 +46,7 @@ public class PaymentProcess extends HttpServlet {
             if (conn != null) {
                 System.out.println(" DB Connected");
 
-                String sql = "INSERT INTO payment (merchant_name, merchant_id, merchant_txn_id, customer_email, customer_mobile, amount, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO transactions (merchant_name, merchant_id, merchant_txn_id, customer_email, customer_mobile, amount, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
 
                 ps.setString(1, merchantName);
