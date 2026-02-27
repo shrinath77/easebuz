@@ -1,0 +1,140 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.easybuzz</groupId>
+	<artifactId>easebuzz</artifactId>
+	<version>1.0.0</version>
+	<packaging>war</packaging>
+
+	<name>easebuzz</name>
+
+	<properties>
+		<maven.compiler.release>17</maven.compiler.release>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<!-- Servlet API (Provided by Tomcat 9) -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JSP API -->
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.3.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JSTL (for JSP tags like c:forEach etc) -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<!-- Apache Commons Codec (useful for Base64/AES/payment encryption) -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.16.0</version>
+		</dependency>
+
+		<!-- MySQL JDBC Driver -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.3.0</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>easebuzz</finalName>
+		<plugins>
+			<!-- Java Compiler -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+				<configuration>
+					<release>17</release>
+				</configuration>
+			</plugin>
+
+			<!-- WAR Plugin (Required for Tomcat Deployment) -->
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+			</plugin>
+
+			<!-- Embedded Tomcat — run with: mvn tomcat7:run -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<port>8083</port>
+					<path>/easebuzz</path>
+					<uriEncoding>UTF-8</uriEncoding>
+					<!-- Skip scanning multi-release JARs that confuse Tomcat 7's BCEL scanner -->
+					<systemProperties>
+						<tomcat.util.scan.DefaultJarScanner.jarsToSkip>
+							mysql-connector-j-*.jar,commons-codec-*.jar,jstl-*.jar
+						</tomcat.util.scan.DefaultJarScanner.jarsToSkip>
+					</systemProperties>
+				</configuration>
+			</plugin>
+
+			<!--
+			  External Tomcat Deployment via Cargo Plugin
+			  ============================================
+			  PRE-REQUISITES:
+			    1. Tomcat 9/10 installed and running on port 8080
+			    2. Tomcat Manager app enabled in conf/tomcat-users.xml:
+			         <role rolename="manager-script"/>
+			         <user username="admin" password="admin123" roles="manager-script"/>
+			    3. Run: mvn package cargo:redeploy
+			         (or cargo:deploy for first time, cargo:undeploy to remove)
+			-->
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven3-plugin</artifactId>
+				<version>1.10.11</version>
+				<configuration>
+					<container>
+						<containerId>tomcat9x</containerId>
+						<type>remote</type>
+					</container>
+					<configuration>
+						<type>runtime</type>
+						<properties>
+							<cargo.hostname>localhost</cargo.hostname>
+							<cargo.servlet.port>8080</cargo.servlet.port>
+							<cargo.tomcat.manager.url>http://localhost:8080/manager/text</cargo.tomcat.manager.url>
+							<cargo.remote.username>admin</cargo.remote.username>
+							<cargo.remote.password>admin123</cargo.remote.password>
+						</properties>
+					</configuration>
+					<deployables>
+						<deployable>
+							<groupId>com.easybuzz</groupId>
+							<artifactId>easebuzz</artifactId>
+							<type>war</type>
+							<properties>
+								<context>/easebuzz</context>
+							</properties>
+						</deployable>
+					</deployables>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
