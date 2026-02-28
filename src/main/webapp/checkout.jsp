@@ -349,6 +349,90 @@ body {
     text-align: center;
     font-size: 15px;
 }
+
+/* ===================== SUCCESS POPUP ===================== */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+.popup-overlay.show {
+    display: flex;
+}
+.popup-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.4s ease;
+    max-width: 400px;
+    width: 90%;
+}
+@keyframes popIn {
+    0%   { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+}
+
+/* Animated Tick */
+.tick-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: #4CAF50;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: circleIn 0.4s ease;
+}
+@keyframes circleIn {
+    0%   { transform: scale(0); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+.tick-circle svg {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: drawTick 0.5s ease 0.3s forwards;
+}
+@keyframes drawTick {
+    to { stroke-dashoffset: 0; }
+}
+
+.popup-box h2 {
+    color: #2c3e50;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+.popup-box .popup-msg {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.popup-box .popup-txn {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 22px;
+}
+.popup-close-btn {
+    padding: 12px 40px;
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.popup-close-btn:hover {
+    background: #388E3C;
+}
+/* ========================================================= */
 </style>
 </head>
 
@@ -709,7 +793,7 @@ function payNow() {
         success: function(response) {
             console.log("[PAYMENT] Success Response:", response);
             $("#payBtn").prop("disabled", false).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16" style="vertical-align:middle;margin-right:6px;margin-bottom:2px;"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>Pay ₹' + AMOUNT);
-            $("#msg").html("<span style='color:green;'>✅ " + (response.message || "Payment Successful!") + "</span>");
+            showSuccessPopup(response);
         },
 
         error: function(xhr, status, error) {
@@ -721,7 +805,41 @@ function payNow() {
         }
     });
 }
+
+// =============================================
+// SUCCESS POPUP
+// =============================================
+function showSuccessPopup(response) {
+    let msg = response.message || "Payment Successful!";
+    // Extract transaction ID from message if present
+    let txnMatch = msg.match(/Transaction ID:\s*(\S+)/);
+    let txnId = txnMatch ? txnMatch[1] : "";
+
+    $("#popupMsg").text("₹" + AMOUNT + " paid via " + selectedMethod.toUpperCase());
+    $("#popupTxn").text(txnId ? "Transaction ID: " + txnId : "");
+    $("#successPopup").addClass("show");
+}
+
+function closePopup() {
+    $("#successPopup").removeClass("show");
+}
 </script>
+
+<!-- SUCCESS POPUP -->
+<div class="popup-overlay" id="successPopup">
+    <div class="popup-box">
+        <div class="tick-circle">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <polyline points="10,20 18,28 30,12" stroke="white" stroke-width="4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h2>Payment Successful!</h2>
+        <p class="popup-msg" id="popupMsg"></p>
+        <p class="popup-txn" id="popupTxn"></p>
+        <button class="popup-close-btn" onclick="closePopup()">Done</button>
+    </div>
+</div>
 
 </body>
 </html>
